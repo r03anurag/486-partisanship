@@ -76,7 +76,8 @@ def write_tweets(tweets, party, user_id):
         for entry in tweets:
             text = entry["text"].strip()
             text_with_spaces = text.replace("\n", " ")
-            final_text = '"' + text_with_spaces + '"'
+            escaped_quotes_text = text_with_spaces.replace('"', '""')
+            final_text = '"' + escaped_quotes_text + '"'
             output_file.write(f'{user_id},{party},{final_text}\n')
 def get_test_tweets():
     with open("test.json", 'r') as file:
