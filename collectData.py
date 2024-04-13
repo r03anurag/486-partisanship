@@ -48,11 +48,19 @@
 
 
 import requests
-import tweepy
+import json
+# import tweepy
 from requests_oauthlib import OAuth1
 
 
-def get_tweets(user_id, tweet_count, consumer_key, consumer_secret, access_token, access_token_secret):
+def get_tweets(user_id):
+    user_id = "nielson_pa45889"
+    tweet_count = 1000
+    consumer_key = "I5jubR6rM8cOXluzo95cOokBF"
+    consumer_secret = "qMwSoF2Euz79aFuFMH3j3J0NFNRWSIohhTUCKgv25hSBBbAKpK"
+    access_token = "1727161020257296384-G9qaTe6xEovjAvQEsOz8nQwO3sZtV7"
+    access_token_secret = "ji5EGD3N1HnksN8bJdqZdyOVRVKakZxMtQsTK6tDMG2Oh"
+    
     url = f"https://api.twitter.com/2/users/%7B{user_id}%7D/tweets?max_results={tweet_count}"
     auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
     response = requests.get(url, auth=auth)
@@ -61,53 +69,37 @@ def get_tweets(user_id, tweet_count, consumer_key, consumer_secret, access_token
     else:
         raise Exception(f"Request returned an error: {response.status_code}, {response.text}")
 
-
-def write_data(filename):
-    user_id = "nielson_pa45889"
-    tweet_count = 10
-    consumer_key = "I5jubR6rM8cOXluzo95cOokBF"
-    consumer_secret = "qMwSoF2Euz79aFuFMH3j3J0NFNRWSIohhTUCKgv25hSBBbAKpK"
-    access_token = "1727161020257296384-G9qaTe6xEovjAvQEsOz8nQwO3sZtV7"
-    access_token_secret = "ji5EGD3N1HnksN8bJdqZdyOVRVKakZxMtQsTK6tDMG2Oh"
-
-    tweets = get_tweets(user_id, tweet_count, consumer_key, consumer_secret, access_token, access_token_secret)
-    print(tweets)
-
+def write_tweets(tweets, party, user_id):
+    """tweets is a json object with id, edit history, text keys.
+    Party: 0 is Democrat; 1 is Republican"""
+    with open("output.csv", "a") as output_file:
+        for entry in tweets:
+            text = entry["text"].strip()
+            text_with_spaces = text.replace("\n", " ")
+            final_text = '"' + text_with_spaces + '"'
+            output_file.write(f'{user_id},{party},{final_text}\n')
+def get_test_tweets():
+    with open("test.json", 'r') as file:
+        json_data = json.load(file)
+        tweets = json_data["data"]
+    return tweets
+def write_data():
     democrat_usernames = ["POTUS", "BarackObama", "VP", "GovKathyHochul", "GovWhitmer", "GovernorShapiro", "GovTinaKotek", "SenatorMenendez", "SenatorBaldwin", "amyklobuchar", "SenCortezMasto", "maziehirono", "RepRaulGrijalva", "RepShriThanedar", "RepKweisiMfume", "RepLoriTrahan", "TulsiGabbard", "SecRaimondo", "DepSecTodman", "AmbassadorTai"]
     republican_usernames = ["realDonaldTrump", "Mike_Pence", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo", "stevenmnuchin1", "SecBernhardt"]
-    all_usernames = democrat_usernames + republican_usernames
-
-    num_democrats = len(democrat_usernames)
-    num_tweets_per_user = 10000 / len(all_usernames)
-
-    with open(filename, 'a', encoding="utf8") as output_file:
+    with open("output.csv", "w") as output_file:
         output_file.write("Username,Label,Tweet\n")
-
-        for i, user_id in enumerate(all_usernames):
-
-            # Democrats are 0 and Republicans are 1
-            label = 0 if i < num_democrats else 1
-
-            tweets_written = 0
-
-            while tweets_written < num_tweets_per_user:
-
-                ###########################################################
-                # Guidelines for writing to csv file:
-                # Do not put any spaces before or after commas
-                # The tweets in the tweets column must be enclosed in double quotes
-                # TODO: Remove all newline characters within tweet
-                ###########################################################
-
-                # tweets = get_tweets(user_id)
-                #   for tweet in tweets:
-                output_file.write(f"{user_id},{label},\"{tweet}\"\n")
-                tweets_written += 1
-
+    tweets = get_test_tweets()  # test ver
+    write_tweets(tweets, 0, "BarackObama")  # test ver
+    # for user_id in democrat_usernames:
+    #     # tweets = get_tweets(user_id)
+    #     # write_tweets(tweets, 0, user_id)
+    
+    # for user_id in republican_usernames:
+        # tweets = get_tweets(user_id)
+        # write_tweets(tweets, 1, user_id)     
 
 def main():
-    write_data("tweets.csv")
-
+    write_data()
 
 if __name__ == "__main__":
     main()
