@@ -3,10 +3,11 @@ import json
 import os
 import time
 
-bearer_token = "AAAAAAAAAAAAAAAAAAAAAKo6tQEAAAAAo5vBqStnM8HhipqSiUeMM3T9Kto%3DRc4JpFfsn4V6rhSIzWKN26IMs13rpiLlsa9zPpAUAm2079Fo8p"
-headers = {"Authorization": f"Bearer {bearer_token}"}
+
     
 def make_request(url, params):
+    bearer_token = "AAAAAAAAAAAAAAAAAAAAAKo6tQEAAAAAo5vBqStnM8HhipqSiUeMM3T9Kto%3DRc4JpFfsn4V6rhSIzWKN26IMs13rpiLlsa9zPpAUAm2079Fo8p"
+    headers = {"Authorization": f"Bearer {bearer_token}"}
     response = requests.get(url, headers=headers, params=params)
     
     if response.status_code == 429:
@@ -22,7 +23,9 @@ def make_request(url, params):
 
 def get_tweets(username):
     tweets = []
-
+    bearer_token = "AAAAAAAAAAAAAAAAAAAAAKo6tQEAAAAAo5vBqStnM8HhipqSiUeMM3T9Kto%3DRc4JpFfsn4V6rhSIzWKN26IMs13rpiLlsa9zPpAUAm2079Fo8p"
+    headers = {"Authorization": f"Bearer {bearer_token}"}
+    
     # translate username to user id. will never go over this api rate limit
     # as long as we respect the tweets rate limit since this one is much more lenient
     user_endpoint = f"https://api.twitter.com/2/users/by/username/{username}"
