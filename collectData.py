@@ -100,8 +100,11 @@ def get_test_tweets():
         tweets = json_data["data"]
     return tweets
 def write_data():
-    democrat_usernames = ["POTUS", "BarackObama", "VP", "GovKathyHochul", "GovWhitmer", "GovernorShapiro", "GovTinaKotek", "SenatorMenendez", "SenatorBaldwin", "amyklobuchar", "SenCortezMasto", "maziehirono", "RepRaulGrijalva", "RepShriThanedar", "RepKweisiMfume", "RepLoriTrahan", "TulsiGabbard", "SecRaimondo", "DepSecTodman", "AmbassadorTai"]
-    republican_usernames = ["realDonaldTrump", "Mike_Pence", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo", "stevenmnuchin1", "SecBernhardt"]
+    # old_dems = ["POTUS", "BarackObama", "VP", "GovKathyHochul", "GovWhitmer", "GovernorShapiro", "GovTinaKotek", "SenatorMenendez", "SenatorBaldwin", "amyklobuchar", "SenCortezMasto", "maziehirono", "RepRaulGrijalva", "RepShriThanedar", "RepKweisiMfume", ]
+    # optional_dems = ["DepSecTodman", "AmbassadorTai"]
+    # optional_reps = ["stevenmnuchin1", "SecBernhardt"]
+    democrat_usernames = ["RepLoriTrahan", "TulsiGabbard", "SecRaimondo"]
+    republican_usernames = ["realDonaldTrump", "Mike_Pence", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo"]
 
     directory = "output"
     if not os.path.exists(directory):
@@ -119,13 +122,14 @@ def write_data():
     # tweets = get_tweets("BarackObama")  # real api single call test ver
     # write_tweets(tweets, 0, "BarackObama")  # real api single call test ver
     
-    for user_id in democrat_usernames:
-        tweets = get_tweets(user_id)
-        write_tweets(tweets, 0, user_id)
+
     
     for user_id in republican_usernames:
         tweets = get_tweets(user_id)
-        write_tweets(tweets, 1, user_id)     
+        write_tweets(tweets, 1, user_id)    
+    for user_id in democrat_usernames:
+        tweets = get_tweets(user_id)
+        write_tweets(tweets, 0, user_id) 
 
 def main():
     write_data()
