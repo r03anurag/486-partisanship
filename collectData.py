@@ -15,7 +15,7 @@ def make_request(url, params):
         wait_time = max(0, reset_time - int(time.time()))
         print(f"Rate limit exceeded. Waiting for {wait_time} seconds until reset.")
         time.sleep(wait_time)  # Wait until rate limit resets
-        return make_request(url, headers)  # Retry the request
+        return make_request(url, params)  # Retry the request
     elif response.status_code == 200:
         return response.json()
     else:
