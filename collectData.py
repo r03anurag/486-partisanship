@@ -101,10 +101,10 @@ def get_test_tweets():
     return tweets
 def write_data():
     # old_dems = ["POTUS", "BarackObama", "VP", "GovKathyHochul", "GovWhitmer", "GovernorShapiro", "GovTinaKotek", "SenatorMenendez", "SenatorBaldwin", "amyklobuchar", "SenCortezMasto", "maziehirono", "RepRaulGrijalva", "RepShriThanedar", "RepKweisiMfume", ]
-    # optional_dems = ["DepSecTodman", "AmbassadorTai"]
-    # optional_reps = ["stevenmnuchin1", "SecBernhardt"]
-    democrat_usernames = ["RepLoriTrahan", "TulsiGabbard", "SecRaimondo"]
-    republican_usernames = ["realDonaldTrump", "Mike_Pence", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo"]
+    democrat_usernames = ["DepSecTodman", "AmbassadorTai"]
+    republican_usernames = ["stevenmnuchin1", "SecBernhardt"]
+    # democrat_usernames = ["RepLoriTrahan", "TulsiGabbard", "SecRaimondo"]
+    # republican_usernames = ["realDonaldTrump", "Mike_Pence", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo"]
 
     directory = "output"
     if not os.path.exists(directory):
