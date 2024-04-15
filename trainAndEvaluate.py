@@ -94,8 +94,8 @@ def main():
             model_params = {
                 'num_train_epochs': 3,  # Number of training epochs
                 'train_batch_size': 32,  # Batch size for training
-                'learning_rate': 1e-5,   # Learning rate for optimizer
-                'weight_decay': 0.01,    # Weight decay for regularization
+                'learning_rate': lr,   # Learning rate for optimizer
+                'weight_decay': wd,    # Weight decay for regularization
                 'optimizer': "AdamW",
                 'overwrite_output_dir': True,  # Overwrite output directory if it exists
                 'save_steps': -1,  # Do not save models during training
