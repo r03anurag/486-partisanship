@@ -63,6 +63,12 @@ def train_and_validate(model, X_train, y_train, X_val, y_val, train_args):
     #plt.show()
 
 
+def train(model, X_train, y_train):
+    train_df = pd.DataFrame({'text': X_train, 'labels': y_train})
+
+    model.train_model(train_df)
+
+
 def validate(model, X_validation, y_validation):
     validation_df = pd.DataFrame({'text': X_validation, 'labels': y_validation})
 
@@ -79,8 +85,11 @@ def test(model, X_test, y_test):
     return result, model_outputs, wrong_predictions
 
 def get_hyperparameters():
-    params = {"learning_rates": [10**-j for j in range(3,6)],
-              "weight_decays": [0.01, 0.001]}
+    params = {
+        "learning_rates": [10 ** -i for i in range(3, 6)],
+        "weight_decays": [0.01, 0.001]
+    }
+
     return params
 
 def main():
@@ -88,8 +97,10 @@ def main():
 
     # learning rates
     for lr in get_hyperparameters()["learning_rates"]:
-        for wd in get_hyperparameters()["weight_decays"]: 
-            print("lr", lr, "|", "wd", wd)
+        for wd in get_hyperparameters()["weight_decays"]:
+
+            print(f"lr {lr} | wd {wd}")
+
             model_params = {
                 'num_train_epochs': 3,  # Number of training epochs
                 'train_batch_size': 32,  # Batch size for training
@@ -122,20 +133,21 @@ def main():
 
             model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=True, args=model_params)
 
-            train_and_validate(model=model, X_train=X_train, y_train=y_train, X_val=X_validation, y_val=y_validation, train_args=model_params)
-            #train(model, X_train, y_train)
+            # train_and_validate(model=model, X_train=X_train, y_train=y_train, X_val=X_validation, y_val=y_validation, train_args=model_params)
+            train(model, X_train, y_train)
+
             result, model_outputs, wrong_predictions = validate(model, X_validation, y_validation)
 
             result2, model_outputs2, wrong_predictions2 = test(model, X_test, y_test)
 
-            '''print(result)
-            print(result2)'''
+            # print(result)
+            # print(result2)
             # print(model_outputs)
             # print(wrong_predictions)
-            with open(f"results/tuning_result_lr_{lr}_wd_{wd}.txt", "w", encoding='utf-8') as outfile:
-                outfile.writelines(f"lr: {lr}, wd: {wd}")
-                outfile.writelines(f"Validation: {result}")
-                outfile.writelines(f"Test: {result2}")
+            with open(f"results/lr_{lr}_wd_{wd}.txt", "w", encoding='utf-8') as outfile:
+                outfile.write(f"lr: {lr}, wd: {wd}\n")
+                outfile.write(f"Validation: {result}\n")
+                outfile.write(f"Test: {result2}\n\n")
 
 
 if __name__ == "__main__":
