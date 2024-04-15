@@ -6,7 +6,8 @@ from processData import load_and_partition_data
 from sklearn.metrics import accuracy_score
 import pandas as pd
 from simpletransformers.classification import ClassificationModel
-
+import seaborn as sns
+import matplotlib.pyplot as plt 
 
 def k_fold_cross_validation(X_train, y_train, model_params):
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=486)
