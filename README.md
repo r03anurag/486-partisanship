@@ -1,5 +1,6 @@
 # 486 Partisanship Detection in Tweets
 A model that can be used to predict the __political partisanship__ of a user based on one of their __tweets__.
+
 ---
 ## Description
 Our model consists of the Bidirectional Encoder Representations from Transformers (BERT) architecture from HuggingFace. It was trained from 230 recent tweets from 40 different politicians (20 Republicans and 20 Democrats), with a 80% training 20% testing data split, all to create word embeddings of the tweets. After, we further fine tuned the model parameters to prevent overfitting and underfitting. This repository consists of said model, along with the scripts used to obtain the data from the Twitter API, process the data, train the data, and evaluate the data. There are also folders of output CSVs containing the tweets obtained from the Twitter API, along with other files containing relevant data.
@@ -47,6 +48,7 @@ python trainAndEvaluate.py
 * Anurag Renduchintala 
 ### Contibuting
 Please email us at [jameleu@umich.edu](mailto:jameleu@umich.edu) if you would like to contribute.
+
 ---
 ## License
 N/A
