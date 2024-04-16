@@ -5,6 +5,19 @@ import time
 
 
 def make_request(url, params):
+    """
+    This function makes a request with the given bearer token and handles the results accordingly.
+    
+    Args:
+        url (string): the api endpoint.
+        params (dictionary): the parameters to the api endpoint.
+    
+    Raises:
+        Exception: api request returned an error.
+    
+    Returns:
+        dictionary: api endpoint's json response converted to python dictionary.
+    """
     bearer_token = "AAAAAAAAAAAAAAAAAAAAAKo6tQEAAAAAo5vBqStnM8HhipqSiUeMM3T9Kto%3DRc4JpFfsn4V6rhSIzWKN26IMs13rpiLlsa9zPpAUAm2079Fo8p"
     headers = {"Authorization": f"Bearer {bearer_token}"}
     response = requests.get(url, headers=headers, params=params)
@@ -22,6 +35,18 @@ def make_request(url, params):
 
 
 def get_tweets(username):
+    """
+    This function gets the username's user id and fetches 230 tweets.
+
+    Args:
+        username (string): twitter user's actual username.
+
+    Raises:
+        Exception: Error response from username-user_id translation api endpoint.
+
+    Returns:
+        list (strings): tweets' text data
+    """
     tweets = []
     bearer_token = "AAAAAAAAAAAAAAAAAAAAAKo6tQEAAAAAo5vBqStnM8HhipqSiUeMM3T9Kto%3DRc4JpFfsn4V6rhSIzWKN26IMs13rpiLlsa9zPpAUAm2079Fo8p"
     headers = {"Authorization": f"Bearer {bearer_token}"}
@@ -37,7 +62,6 @@ def get_tweets(username):
     
     # Twitter API v2 endpoint for fetching user tweets
     endpoint = f"https://api.twitter.com/2/users/{user_id}/tweets"
-    # endpoint = 'https://api.twitter.com/2/users/me'  # free test point
     
     # 230 tweets per user so that can have 9200 tweets total
     params = {
@@ -45,17 +69,6 @@ def get_tweets(username):
     }
     count = 0
     
-    # test one api call
-    # response = requests.get(endpoint, headers=headers)
-    # data = response.json()
-    # if data.get("errors"):
-    #     print(data.get("errors"))
-    # print("response:", data)
-    # next_token = data["meta"].get("next_token")
-    # print("token:", next_token)
-    # tweets.extend(data.get("data", []))
-    # return tweets
-
     # get 200 tweets
     while count < 2:
         data = make_request(endpoint, params) 
@@ -80,8 +93,14 @@ def get_tweets(username):
 
 
 def write_tweets(tweets, party, username):
-    """tweets is a json object with id, edit history, text keys.
-    Party: 0 is Democrat; 1 is Republican"""
+    """
+    This function writes the tweets for a user in their corresponding CSV file. No return value.
+
+    Args:
+        tweets (list of strings): list of this user's 230 most recent tweets as strings.
+        party (int): 0 is Democrat; 1 is Republican.
+        username (string): The user's actual Twitter username.
+    """
 
     party_name = "republicans"
     if party == 0:
@@ -90,6 +109,8 @@ def write_tweets(tweets, party, username):
     with open(f"output/{party_name}/{username}_output.csv", "w", encoding="utf-8") as output_file:
         output_file.write("Username,Label,Tweet\n")
         for entry in tweets:
+            # process the tweet text data: replace new lines with spaces,
+            # replace quotations with double quotes, and add quotations around the text
             text = entry["text"].strip()
             text_with_spaces = text.replace("\n", " ")
             escaped_quotes_text = text_with_spaces.replace('"', '""')
@@ -98,6 +119,12 @@ def write_tweets(tweets, party, username):
 
 
 def get_test_tweets():
+    """
+    This function was used to test the functionality of other functions originally.
+
+    Returns:
+        list of strings: tweets' text in list
+    """
     with open("test.json", 'r', encoding="utf-8") as file:
         json_data = json.load(file)
         tweets = json_data["data"]
@@ -105,8 +132,27 @@ def get_test_tweets():
 
 
 def write_data():
-    democrat_usernames = ["POTUS", "BarackObama", "VP", "GovKathyHochul", "DepSecTodman", "AmbassadorTai", "RepLoriTrahan", "TulsiGabbard", "SecRaimondo", "GovWhitmer", "GovernorShapiro", "GovTinaKotek", "SenatorMenendez", "SenatorBaldwin", "amyklobuchar", "SenCortezMasto", "maziehirono", "RepRaulGrijalva", "RepShriThanedar", "RepKweisiMfume", ]
-    republican_usernames = ["realDonaldTrump", "Mike_Pence", "stevenmnuchin1", "SecBernhardt", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo"]
+    """
+    For 20 predetermined Democrat and 20 predetermined Republican politicans,
+    get their tweets and write them to CSV files.
+    """
+    democrat_usernames = [
+        "POTUS", "BarackObama", "VP", "GovKathyHochul", 
+        "DepSecTodman", "AmbassadorTai", "RepLoriTrahan",
+        "TulsiGabbard", "SecRaimondo", "GovWhitmer",
+        "GovernorShapiro", "GovTinaKotek", "SenatorMenendez",
+        "SenatorBaldwin", "amyklobuchar", "SenCortezMasto",
+        "maziehirono", "RepRaulGrijalva", "RepShriThanedar",
+        "RepKweisiMfume", 
+    ]
+    republican_usernames = [
+        "realDonaldTrump", "Mike_Pence", "stevenmnuchin1", 
+        "SecBernhardt", "repkevinhern", "RepBradWenstrup",
+        "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal",
+        "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott",
+        "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito",
+        "RealBenCarson", "mikepompeo"
+    ]
 
     directory = "output"
     if not os.path.exists(directory):
@@ -117,14 +163,6 @@ def write_data():
     dem = "output/democrats"
     if not os.path.exists(dem):
         os.makedirs(dem)
-    # tweets = get_test_tweets()  # test ver
-    # write_tweets(tweets, 0, "BarackObama")  # test ver
-    # write_tweets(tweets, 1, "realDonaldTrump")  # test ver
-    
-    # tweets = get_tweets("BarackObama")  # real api single call test ver
-    # write_tweets(tweets, 0, "BarackObama")  # real api single call test ver
-    
-
     
     for user_id in republican_usernames:
         tweets = get_tweets(user_id)
@@ -135,6 +173,8 @@ def write_data():
 
 
 def main():
+    """Main function that calls the logic of the function.
+    """
     write_data()
 
 
