@@ -86,7 +86,7 @@ def write_tweets(tweets, party, username):
     if party == 0:
         party_name = "democrats"
     
-    with open(f"output/{party_name}/{username}_output.csv", "w") as output_file:
+    with open(f"output/{party_name}/{username}_output.csv", "w", encoding="utf-8") as output_file:
         output_file.write("Username,Label,Tweet\n")
         for entry in tweets:
             text = entry["text"].strip()
