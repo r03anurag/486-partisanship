@@ -1,3 +1,8 @@
+"""
+trainAndEvaluate.py
+
+Trains and determines performance of BERT model.
+"""
 import torch
 from sklearn.model_selection import StratifiedKFold
 from torch.utils.data import DataLoader, TensorDataset

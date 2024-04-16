@@ -1,3 +1,9 @@
+"""
+collectData.py
+
+Pulls 230 tweets from Twitter API for each predetermined politician,
+then parses and formats the data into CSV.
+"""
 import requests
 import json
 import os

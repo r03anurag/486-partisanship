@@ -1,3 +1,8 @@
+"""
+generatePlots.py
+
+Creates a confusion matrix based on data points.
+"""
 import matplotlib.pyplot as plt
 import numpy as np
 
