@@ -10,7 +10,6 @@ import os
 import re
 
 
-# Defunct to make process more efficient
 def aggregate_csvs(outfile_name):
     """
     Aggregate data from separate CSV files into a single CSV file.
@@ -69,6 +68,8 @@ def main():
     """
     Is entry point for the script.
     """
+    # aggregate_csvs("allTweets.csv")  
+    # ~~uncomment this^ if this is your first run after pulling data using collectData.py!~~
     load_and_partition_data("allTweets.csv")
 
 

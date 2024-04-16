@@ -107,7 +107,7 @@ def main():
     """
     X_train, X_validation, X_test, y_train, y_validation, y_test = load_and_partition_data("allTweets.csv")
 
-    # learning rates
+    # learning rates; grid search for hyperparameter tuning
     for lr in get_hyperparameters()["learning_rates"]:
         for wd in get_hyperparameters()["weight_decays"]:
 
@@ -146,6 +146,7 @@ def main():
                 outfile.write(f"Validation: {result}\n")
                 outfile.write(f"Test: {result2}\n")
 
+    # Finding incorrect predictions for optimal model
     optimal_model_params = {
         'num_train_epochs': 3,  # Number of training epochs
         'train_batch_size': 32,  # Batch size for training
