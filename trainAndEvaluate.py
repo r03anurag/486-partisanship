@@ -8,6 +8,34 @@ from simpletransformers.classification import ClassificationModel
 import matplotlib.pyplot as plt 
 
 
+# not used because chose different method for efficiency
+def k_fold_cross_validation(X_train, y_train, model_params):
+    """Performs k-fold cross-validation on a classification model.
+
+    Args:
+        X_train (pd.Series): Input features for training.
+        y_train (pd.Series): Target labels for training.
+        model_params (dict): Parameters for the classification model.
+
+    Returns:
+        float: Mean accuracy score across all folds.
+    """
+    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=486)
+    results = []
+
+    for train_idx, val_idx in kf.split(X_train, y_train):
+        train_df = pd.DataFrame({'text': X_train.iloc[train_idx], 'labels': y_train.iloc[train_idx]})
+        val_df = pd.DataFrame({'text': X_train.iloc[val_idx], 'labels': y_train.iloc[val_idx]})
+
+        model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=True, args=model_params)  # Adjust parameters as needed
+        model.train_model(train_df)
+
+        result, _, _ = model.eval_model(val_df, False, acc=accuracy_score)
+        results.append(result['acc'])
+
+    return sum(results) / len(results)
+
+
 def train(model, X_train, y_train):
     """
     Trains the classification model.
@@ -50,7 +78,6 @@ def test(model, X_test, y_test):
     Returns:
         Tuple[Dict, List, List]: Evaluation result, model outputs, and wrong predictions.
     """
-
     test_df = pd.DataFrame({'text': X_test, 'labels': y_test})
     result, model_outputs, wrong_predictions = model.eval_model(test_df, False, acc=accuracy_score)
     return result, model_outputs, wrong_predictions
@@ -63,7 +90,6 @@ def get_hyperparameters():
     Returns:
         dict: Hyperparameters for hyperparameter tuning.
     """
-
     params = {
         "learning_rates": [10 ** -i for i in range(3, 6)],
         "weight_decays": [10 ** -i for i in range(1, 6)]
