@@ -3,7 +3,9 @@ A model that can be used to predict the __political partisanship__ of a user bas
 
 ---
 ## Description
-Our model consists of the Bidirectional Encoder Representations from Transformers (BERT) architecture from HuggingFace. It was trained from 230 recent tweets from 40 different politicians (20 Republicans and 20 Democrats), with a 80% training 20% testing data split, all to create word embeddings of the tweets. After, we further fine tuned the model parameters to prevent overfitting and underfitting. This repository consists of said model, along with the scripts used to obtain the data from the Twitter API, process the data, train the data, and evaluate the data. There are also folders of output CSVs containing the tweets obtained from the Twitter API, along with other files containing relevant data.
+Our model consists of the Bidirectional Encoder Representations from Transformers (BERT) architecture from HuggingFace. 
+We obtained our data by collecting 9200 recent tweets from politicians of known political affiliations (20 Republicans and 20 Democrats) using the Twitter API, and split the data into 70% for training, 15% for validation and 15% for testing.
+After training our model with the training set, we further fine tuned the model's hyperparameters to prevent overfitting and underfitting using a grid search. This repository consists of said model, along with the scripts used to obtain the data from the Twitter API, process the data, train the model, and evaluate the model. There are also folders of output CSVs containing the tweets obtained from the Twitter API, along with other files containing relevant data.
 
 ---
 ## Getting Started

@@ -8,6 +8,7 @@ import pandas as pd
 from simpletransformers.classification import ClassificationModel
 import matplotlib.pyplot as plt 
 
+
 def k_fold_cross_validation(X_train, y_train, model_params):
     kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=486)
     results = []
@@ -26,41 +27,41 @@ def k_fold_cross_validation(X_train, y_train, model_params):
     return sum(results) / len(results)
 
 
-def train_and_validate(model, X_train, y_train, X_val, y_val, train_args):
-    train_df = pd.DataFrame({'text': X_train, 'labels': y_train})
-    val_df = pd.DataFrame({"text": X_val, "labels": y_val})
-
-    # Define a function to capture evaluation metrics during training
-    training_history = []
-    def capture_metrics(eval_result):
-        training_history.append(eval_result)
-
-    model.train_model(train_df, eval_df=val_df, evaluator="sklearn", callbacks=[capture_metrics], args=train_args)
-
-    # Step 3: Plot the training history
-    train_loss = [metrics['eval_loss'] for metrics in training_history]
-    train_acc = [metrics['eval_accuracy'] for metrics in training_history]
-    val_loss = [metrics['eval_loss'] for metrics in training_history]
-    val_acc = [metrics['eval_accuracy'] for metrics in training_history]
-    steps = [i * train_args['evaluate_during_training_steps'] for i in range(len(training_history))]
-
-    plt.plot(steps, train_loss, label='Training Loss')
-    plt.plot(steps, val_loss, label='Validation Loss')
-    plt.xlabel('Training Steps')
-    plt.ylabel('Loss')
-    plt.title('Training and Validation Loss')
-    plt.legend()
-    plt.savefig('plots/loss_plot_lr_' + str(train_args['learning_rate']) + '_wd_' + str(train_args['weight_decay']) + '.png')  # Save the plot as loss_plot.png
-    #plt.show()
-
-    plt.plot(steps, train_acc, label='Training Accuracy')
-    plt.plot(steps, val_acc, label='Validation Accuracy')
-    plt.xlabel('Training Steps')
-    plt.ylabel('Accuracy')
-    plt.title('Training and Validation Accuracy')
-    plt.legend()
-    plt.savefig('plots/accuracy_plot_lr_' + str(train_args['learning_rate']) + '_wd_' + str(train_args['weight_decay']) + '.png')  # Save the plot as accuracy_plot.png
-    #plt.show()
+# def train_and_validate(model, X_train, y_train, X_val, y_val, train_args):
+#     train_df = pd.DataFrame({'text': X_train, 'labels': y_train})
+#     val_df = pd.DataFrame({"text": X_val, "labels": y_val})
+#
+#     # Define a function to capture evaluation metrics during training
+#     training_history = []
+#     def capture_metrics(eval_result):
+#         training_history.append(eval_result)
+#
+#     model.train_model(train_df, eval_df=val_df, evaluator="sklearn", callbacks=[capture_metrics], args=train_args)
+#
+#     # Step 3: Plot the training history
+#     train_loss = [metrics['eval_loss'] for metrics in training_history]
+#     train_acc = [metrics['eval_accuracy'] for metrics in training_history]
+#     val_loss = [metrics['eval_loss'] for metrics in training_history]
+#     val_acc = [metrics['eval_accuracy'] for metrics in training_history]
+#     steps = [i * train_args['evaluate_during_training_steps'] for i in range(len(training_history))]
+#
+#     plt.plot(steps, train_loss, label='Training Loss')
+#     plt.plot(steps, val_loss, label='Validation Loss')
+#     plt.xlabel('Training Steps')
+#     plt.ylabel('Loss')
+#     plt.title('Training and Validation Loss')
+#     plt.legend()
+#     plt.savefig('plots/loss_plot_lr_' + str(train_args['learning_rate']) + '_wd_' + str(train_args['weight_decay']) + '.png')  # Save the plot as loss_plot.png
+#     #plt.show()
+#
+#     plt.plot(steps, train_acc, label='Training Accuracy')
+#     plt.plot(steps, val_acc, label='Validation Accuracy')
+#     plt.xlabel('Training Steps')
+#     plt.ylabel('Accuracy')
+#     plt.title('Training and Validation Accuracy')
+#     plt.legend()
+#     plt.savefig('plots/accuracy_plot_lr_' + str(train_args['learning_rate']) + '_wd_' + str(train_args['weight_decay']) + '.png')  # Save the plot as accuracy_plot.png
+#     #plt.show()
 
 
 def train(model, X_train, y_train):
@@ -87,7 +88,7 @@ def test(model, X_test, y_test):
 def get_hyperparameters():
     params = {
         "learning_rates": [10 ** -i for i in range(3, 6)],
-        "weight_decays": [0.01, 0.001]
+        "weight_decays": [10 ** -i for i in range(1, 6)]
     }
 
     return params
@@ -147,7 +148,37 @@ def main():
             with open(f"results/lr_{lr}_wd_{wd}.txt", "w", encoding='utf-8') as outfile:
                 outfile.write(f"lr: {lr}, wd: {wd}\n")
                 outfile.write(f"Validation: {result}\n")
-                outfile.write(f"Test: {result2}\n\n")
+                outfile.write(f"Test: {result2}\n")
+
+    optimal_model_params = {
+        'num_train_epochs': 3,  # Number of training epochs
+        'train_batch_size': 32,  # Batch size for training
+        'learning_rate': 0.0001,   # Learning rate for optimizer
+        'weight_decay': 0.0001,    # Weight decay for regularization
+        'optimizer': "AdamW",
+        'overwrite_output_dir': True,  # Overwrite output directory if it exists
+        'save_steps': -1,  # Do not save models during training
+        'no_cache': True,  # Do not cache features to save memory
+        'use_early_stopping': True,  # Use early stopping during training
+        'early_stopping_patience': 3,  # Number of epochs to wait before early stopping
+        'eval_batch_size': 32,  # Batch size for evaluation
+        'max_seq_length': 128,  # Maximum sequence length for input
+        'manual_seed': 486,  # Set seed for reproducibility
+        'output_dir': 'outputs/',  # Output directory for model checkpoints and predictions
+        'cache_dir': 'cache_dir/',  # Directory for storing cache files
+        'fp16': False,  # Enable mixed precision training
+        'use_cuda': True,  # Use GPU if available
+        'dropout': 0.1,  # Dropout probability for dropout layers
+    }
+
+    optimal_model = model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=True, args=optimal_model_params)
+
+    train(optimal_model, X_train, y_train)
+
+    result, model_outputs, wrong_predictions = test(model, X_test, y_test)
+
+    with open("incorrectPredictions.txt", 'w', encoding="utf-8") as outputfile:
+        outputfile.write(f"{wrong_predictions}\n")
 
 
 if __name__ == "__main__":

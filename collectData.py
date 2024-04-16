@@ -4,7 +4,6 @@ import os
 import time
 
 
-    
 def make_request(url, params):
     bearer_token = "AAAAAAAAAAAAAAAAAAAAAKo6tQEAAAAAo5vBqStnM8HhipqSiUeMM3T9Kto%3DRc4JpFfsn4V6rhSIzWKN26IMs13rpiLlsa9zPpAUAm2079Fo8p"
     headers = {"Authorization": f"Bearer {bearer_token}"}
@@ -20,6 +19,7 @@ def make_request(url, params):
         return response.json()
     else:
         raise Exception(f"Request returned an error: {response.status_code}, {response.text}")
+
 
 def get_tweets(username):
     tweets = []
@@ -78,6 +78,7 @@ def get_tweets(username):
     
     return tweets
 
+
 def write_tweets(tweets, party, username):
     """tweets is a json object with id, edit history, text keys.
     Party: 0 is Democrat; 1 is Republican"""
@@ -94,11 +95,15 @@ def write_tweets(tweets, party, username):
             escaped_quotes_text = text_with_spaces.replace('"', '""')
             final_text = '"' + escaped_quotes_text + '"'
             output_file.write(f'{username},{party},{final_text}\n')
+
+
 def get_test_tweets():
-    with open("test.json", 'r') as file:
+    with open("test.json", 'r', encoding="utf-8") as file:
         json_data = json.load(file)
         tweets = json_data["data"]
     return tweets
+
+
 def write_data():
     democrat_usernames = ["POTUS", "BarackObama", "VP", "GovKathyHochul", "DepSecTodman", "AmbassadorTai", "RepLoriTrahan", "TulsiGabbard", "SecRaimondo", "GovWhitmer", "GovernorShapiro", "GovTinaKotek", "SenatorMenendez", "SenatorBaldwin", "amyklobuchar", "SenCortezMasto", "maziehirono", "RepRaulGrijalva", "RepShriThanedar", "RepKweisiMfume", ]
     republican_usernames = ["realDonaldTrump", "Mike_Pence", "stevenmnuchin1", "SecBernhardt", "repkevinhern", "RepBradWenstrup", "RepMonicaDLC", "mtgreenee", "kayiveyforgov", "BobbyJindal", "MikeDeWine", "SarahHuckabee", "NikkiHaley", "votetimscott", "MarshaBlackburn", "SenTuberville", "JDVance1", "SenCapito", "RealBenCarson", "mikepompeo"]
@@ -128,8 +133,10 @@ def write_data():
         tweets = get_tweets(user_id)
         write_tweets(tweets, 0, user_id) 
 
+
 def main():
     write_data()
+
 
 if __name__ == "__main__":
     main()
