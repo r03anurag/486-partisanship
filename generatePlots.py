@@ -3,7 +3,14 @@ import numpy as np
 
 
 def generate_confusion_matrix(tp, tn, fp, fn):
+    """Generates and visualizes a confusion matrix.
 
+    Args:
+        tp (int): Number of true positives.
+        tn (int): Number of true negatives.
+        fp (int): Number of false positives.
+        fn (int): Number of false negatives.
+    """
     # Construct the confusion matrix manually
     confusion_matrix = np.array([[tp, fp], [fn, tn]])
 
