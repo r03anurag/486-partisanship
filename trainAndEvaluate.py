@@ -13,7 +13,7 @@ from simpletransformers.classification import ClassificationModel
 import matplotlib.pyplot as plt 
 
 
-# not used because chose different method for efficiency
+# Not used because chose different method for efficiency
 def k_fold_cross_validation(X_train, y_train, model_params):
     """Performs k-fold cross-validation on a classification model.
 
@@ -32,7 +32,7 @@ def k_fold_cross_validation(X_train, y_train, model_params):
         train_df = pd.DataFrame({'text': X_train.iloc[train_idx], 'labels': y_train.iloc[train_idx]})
         val_df = pd.DataFrame({'text': X_train.iloc[val_idx], 'labels': y_train.iloc[val_idx]})
 
-        model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=True, args=model_params)  # Adjust parameters as needed
+        model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=False, args=model_params)
         model.train_model(train_df)
 
         result, _, _ = model.eval_model(val_df, False, acc=accuracy_score)
@@ -99,6 +99,7 @@ def get_hyperparameters():
         "learning_rates": [10 ** -i for i in range(3, 6)],
         "weight_decays": [10 ** -i for i in range(1, 6)]
     }
+
     return params
 
 def main():
@@ -107,72 +108,73 @@ def main():
     """
     X_train, X_validation, X_test, y_train, y_validation, y_test = load_and_partition_data("allTweets.csv")
 
-    # learning rates; grid search for hyperparameter tuning
+    # Grid search for hyperparameter tuning
     for lr in get_hyperparameters()["learning_rates"]:
         for wd in get_hyperparameters()["weight_decays"]:
 
             print(f"lr {lr} | wd {wd}")
 
             model_params = {
-                'num_train_epochs': 3,  # Number of training epochs
-                'train_batch_size': 32,  # Batch size for training
-                'learning_rate': lr,   # Learning rate for optimizer
-                'weight_decay': wd,    # Weight decay for regularization
-                'optimizer': "AdamW",
-                'overwrite_output_dir': True,  # Overwrite output directory if it exists
-                'save_steps': -1,  # Do not save models during training
-                'no_cache': True,  # Do not cache features to save memory
-                'use_early_stopping': True,  # Use early stopping during training
-                'early_stopping_patience': 3,  # Number of epochs to wait before early stopping
-                'eval_batch_size': 32,  # Batch size for evaluation
-                'max_seq_length': 128,  # Maximum sequence length for input
-                'manual_seed': 486,  # Set seed for reproducibility
-                'output_dir': 'outputs/',  # Output directory for model checkpoints and predictions
-                'cache_dir': 'cache_dir/',  # Directory for storing cache files
-                'fp16': False,  # Enable mixed precision training
-                'use_cuda': True,  # Use GPU if available
-                'dropout': 0.1,  # Dropout probability for dropout layers
+                'num_train_epochs': 3,          # Number of training epochs
+                'train_batch_size': 32,         # Batch size for training
+                'learning_rate': lr,            # Learning rate for optimizer
+                'weight_decay': wd,             # Weight decay for regularization
+                'optimizer': "AdamW",           # Adam Optimizer
+                'overwrite_output_dir': True,   # Overwrite output directory if it exists
+                'save_steps': -1,               # Do not save models during training
+                'no_cache': True,               # Do not cache features to save memory
+                'use_early_stopping': True,     # Use early stopping during training
+                'early_stopping_patience': 3,   # Number of epochs to wait before early stopping
+                'eval_batch_size': 32,          # Batch size for evaluation
+                'max_seq_length': 128,          # Maximum sequence length for input
+                'manual_seed': 486,             # Set seed for reproducibility
+                'output_dir': 'outputs/',       # Output directory for model checkpoints and predictions
+                'cache_dir': 'cache_dir/',      # Directory for storing cache files
+                'fp16': False,                  # Enable mixed precision training
+                'use_cuda': False,              # Use GPU if available
+                'dropout': 0.1,                 # Dropout probability for dropout layers
             }
-            model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=True, args=model_params)
+
+            model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=False, args=model_params)
 
             train(model, X_train, y_train)
 
-            result, model_outputs, wrong_predictions = validate(model, X_validation, y_validation)
+            result, _, _ = validate(model, X_validation, y_validation)
 
-            result2, model_outputs2, wrong_predictions2 = test(model, X_test, y_test)
+            result2, _, _ = test(model, X_test, y_test)
 
-            with open(f"results/lr_{lr}_wd_{wd}.txt", "w", encoding='utf-8') as outfile:
+            with open(f"results/lr_{lr}_wd_{wd}.txt", "w", encoding="utf-8") as outfile:
                 outfile.write(f"lr: {lr}, wd: {wd}\n")
                 outfile.write(f"Validation: {result}\n")
                 outfile.write(f"Test: {result2}\n")
 
-    # Finding incorrect predictions for optimal model
+    # Obtaining incorrect predictions for optimal model
     optimal_model_params = {
-        'num_train_epochs': 3,  # Number of training epochs
-        'train_batch_size': 32,  # Batch size for training
-        'learning_rate': 0.0001,   # Learning rate for optimizer
-        'weight_decay': 0.0001,    # Weight decay for regularization
-        'optimizer': "AdamW",
-        'overwrite_output_dir': True,  # Overwrite output directory if it exists
-        'save_steps': -1,  # Do not save models during training
-        'no_cache': True,  # Do not cache features to save memory
-        'use_early_stopping': True,  # Use early stopping during training
-        'early_stopping_patience': 3,  # Number of epochs to wait before early stopping
-        'eval_batch_size': 32,  # Batch size for evaluation
-        'max_seq_length': 128,  # Maximum sequence length for input
-        'manual_seed': 486,  # Set seed for reproducibility
-        'output_dir': 'outputs/',  # Output directory for model checkpoints and predictions
-        'cache_dir': 'cache_dir/',  # Directory for storing cache files
-        'fp16': False,  # Enable mixed precision training
-        'use_cuda': True,  # Use GPU if available
-        'dropout': 0.1,  # Dropout probability for dropout layers
+        'num_train_epochs': 3,          # Number of training epochs
+        'train_batch_size': 32,         # Batch size for training
+        'learning_rate': 0.0001,        # Learning rate for optimizer
+        'weight_decay': 0.0001,         # Weight decay for regularization
+        'optimizer': "AdamW",           # Adam Optimizer
+        'overwrite_output_dir': True,   # Overwrite output directory if it exists
+        'save_steps': -1,               # Do not save models during training
+        'no_cache': True,               # Do not cache features to save memory
+        'use_early_stopping': True,     # Use early stopping during training
+        'early_stopping_patience': 3,   # Number of epochs to wait before early stopping
+        'eval_batch_size': 32,          # Batch size for evaluation
+        'max_seq_length': 128,          # Maximum sequence length for input
+        'manual_seed': 486,             # Set seed for reproducibility
+        'output_dir': 'outputs/',       # Output directory for model checkpoints and predictions
+        'cache_dir': 'cache_dir/',      # Directory for storing cache files
+        'fp16': False,                  # Enable mixed precision training
+        'use_cuda': False,              # Use GPU if available
+        'dropout': 0.1,                 # Dropout probability for dropout layers
     }
 
-    optimal_model = model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=True, args=optimal_model_params)
+    optimal_model = model = ClassificationModel('bert', 'bert-base-uncased', num_labels=2, use_cuda=False, args=optimal_model_params)
 
     train(optimal_model, X_train, y_train)
 
-    result, model_outputs, wrong_predictions = test(model, X_test, y_test)
+    _, _, wrong_predictions = test(model, X_test, y_test)
 
     with open("incorrectPredictions.txt", 'w', encoding="utf-8") as outputfile:
         outputfile.write(f"{wrong_predictions}\n")

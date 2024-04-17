@@ -5,7 +5,6 @@ Provides functions for loading, preprocessing, tokenizing, and partitioning data
 """
 import pandas as pd
 from sklearn.model_selection import train_test_split
-import nltk
 import os
 import re
 
@@ -70,6 +69,7 @@ def main():
     """
     # aggregate_csvs("allTweets.csv")  
     # ~~uncomment this^ if this is your first run after pulling data using collectData.py!~~
+
     load_and_partition_data("allTweets.csv")
 
 

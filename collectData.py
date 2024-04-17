@@ -2,7 +2,7 @@
 collectData.py
 
 Pulls 230 tweets from Twitter API for each predetermined politician,
-then parses and formats the data into CSV.
+then parses and formats the data into CSV files.
 """
 import requests
 import json
@@ -45,7 +45,7 @@ def get_tweets(username):
     This function gets the username's user id and fetches 230 tweets.
 
     Args:
-        username (string): twitter user's actual username.
+        username (string): Twitter user's actual username.
 
     Raises:
         Exception: Error response from username-user_id translation api endpoint.
@@ -73,6 +73,7 @@ def get_tweets(username):
     params = {
         "max_results": 100,  # max per page is 100        
     }
+
     count = 0
     
     # get 200 tweets
@@ -86,6 +87,7 @@ def get_tweets(username):
         tweets.extend(data.get("data", []))
         if not next_token:
             return tweets  # stop if no more to find
+
     # get last 30 tweets
     if next_token:
         params["max_results"] = 30
@@ -107,10 +109,7 @@ def write_tweets(tweets, party, username):
         party (int): 0 is Democrat; 1 is Republican.
         username (string): The user's actual Twitter username.
     """
-
-    party_name = "republicans"
-    if party == 0:
-        party_name = "democrats"
+    party_name = "democrats" if party == 0 else "republicans"
     
     with open(f"output/{party_name}/{username}_output.csv", "w", encoding="utf-8") as output_file:
         output_file.write("Username,Label,Tweet\n")
@@ -149,8 +148,9 @@ def write_data():
         "GovernorShapiro", "GovTinaKotek", "SenatorMenendez",
         "SenatorBaldwin", "amyklobuchar", "SenCortezMasto",
         "maziehirono", "RepRaulGrijalva", "RepShriThanedar",
-        "RepKweisiMfume", 
+        "RepKweisiMfume"
     ]
+
     republican_usernames = [
         "realDonaldTrump", "Mike_Pence", "stevenmnuchin1", 
         "SecBernhardt", "repkevinhern", "RepBradWenstrup",
@@ -179,7 +179,8 @@ def write_data():
 
 
 def main():
-    """Main function that calls the logic of the function.
+    """
+    Main function that calls the logic of the function.
     """
     write_data()
 
