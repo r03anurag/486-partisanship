@@ -3,14 +3,12 @@ trainAndEvaluate.py
 
 Trains and determines performance of BERT model.
 """
-import torch
-from sklearn.model_selection import StratifiedKFold
-from torch.utils.data import DataLoader, TensorDataset
-from processData import load_and_partition_data
-from sklearn.metrics import accuracy_score
 import pandas as pd
 from simpletransformers.classification import ClassificationModel
-import matplotlib.pyplot as plt 
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import StratifiedKFold
+
+from processData import load_and_partition_data
 
 
 # Not used because chose different method for efficiency
