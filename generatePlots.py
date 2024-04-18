@@ -35,7 +35,8 @@ def generate_confusion_matrix(tp, tn, fp, fn, kind):
     # Add text annotations for values in the matrix
     for i in range(2):
         for j in range(2):
-            plt.text(j, i, str(confusion_matrix[i, j]), ha='center', va='center', color='black')
+            color = 'white' if confusion_matrix[i, j] > confusion_matrix.max() / 2 else 'black'
+            plt.text(j, i, str(confusion_matrix[i, j]), ha='center', va='center', color=color)
 
     # Adjust subplot spacing to add a gap between title and graph
     plt.tight_layout(pad=3)
